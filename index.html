@@ -1,0 +1,553 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#fdf0dc">
+<title>Говори уверенно — демо</title>
+<style>
+:root{--bg:#fdf0dc;--card:#fff;--ink:#2b1d14;--muted:#7a6a5c;--brand:#b5651d;--brand2:#8a1c1c;--blue:#1e88d6;--good:#1fa463;--mid:#f09a1a;--bad:#e03e3e;--line:#efe0cb;--r:20px}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:linear-gradient(180deg,#fff7ea,#fdf0dc 40%,#f8e6cb);color:var(--ink);min-height:100vh;padding-bottom:90px}
+.wrap{max-width:560px;margin:0 auto;padding:16px}
+header{display:flex;align-items:center;gap:12px;padding:6px 0 14px}
+.num{width:46px;height:46px;border-radius:50%;background:var(--brand);color:#fff;font-weight:800;font-size:24px;display:grid;place-items:center;flex:none}
+h1{font-size:21px;line-height:1.1;margin:0;color:var(--brand2);font-weight:900;text-transform:uppercase;letter-spacing:.2px}
+h1 small{display:block;text-transform:none;font-size:14px;color:var(--ink);font-weight:700;margin-top:3px}
+.badge{display:inline-block;background:var(--blue);color:#fff;border-radius:999px;padding:3px 12px;font-size:12px;font-weight:700;margin-left:auto}
+.card{background:var(--card);border-radius:var(--r);padding:16px;box-shadow:0 6px 22px rgba(120,70,20,.10);margin-bottom:14px}
+.hide{display:none!important}
+.assistant{display:flex;gap:12px;align-items:flex-start}
+.orb{width:54px;height:54px;border-radius:50%;flex:none;background:conic-gradient(from 0deg,#ff8a3d,#c0392b,#7b3fe4,#1e88d6,#ff8a3d);position:relative;animation:spin 6s linear infinite;box-shadow:0 0 0 4px #fff,0 4px 14px rgba(120,60,20,.3)}
+.orb::after{content:"";position:absolute;inset:9px;border-radius:50%;background:#fff;opacity:.92}
+.orb.live{animation:spin 1.5s linear infinite,pulse 1s ease-in-out infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{50%{transform:scale(1.12)}}
+.bubble{background:#fff7ea;border:1px solid var(--line);border-radius:6px 18px 18px 18px;padding:11px 14px;font-size:15px;line-height:1.4;flex:1}
+.bubble b{color:var(--brand2)}
+h2{font-size:17px;margin:0 0 10px}
+.topics{display:grid;gap:8px}
+.topic{border:2px solid var(--line);background:#fff;border-radius:14px;padding:11px 13px;font-size:15px;text-align:left;font-family:inherit;color:var(--ink);cursor:pointer}
+.topic.sel{border-color:var(--brand);background:#fff3e2;font-weight:700}
+input[type=text],textarea{width:100%;border:2px solid var(--line);border-radius:14px;padding:11px 13px;font:inherit;font-size:15px;background:#fff;color:var(--ink)}
+textarea{min-height:140px;resize:vertical}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border:2px solid var(--line);background:#fff;border-radius:999px;padding:8px 14px;font:inherit;font-size:14px;cursor:pointer;color:var(--ink)}
+.chip.sel{background:var(--brand);color:#fff;border-color:var(--brand)}
+.btn{display:block;width:100%;border:0;border-radius:16px;padding:16px;font:inherit;font-size:17px;font-weight:800;color:#fff;background:linear-gradient(135deg,#d9822b,#b5651d);box-shadow:0 6px 16px rgba(181,101,29,.35);cursor:pointer}
+.btn.red{background:linear-gradient(135deg,#e55353,#b92a2a);box-shadow:0 6px 16px rgba(200,50,50,.35)}
+.btn.ghost{background:#fff;color:var(--brand2);box-shadow:none;border:2px solid var(--line)}
+.btn.blue{background:linear-gradient(135deg,#3aa0ee,#1e6fc0);box-shadow:0 6px 16px rgba(30,111,192,.3)}
+.btn+.btn{margin-top:10px}
+.small{font-size:13px;color:var(--muted);line-height:1.45}
+.notice{background:#fff3cd;border:1px solid #f1d98a;border-radius:14px;padding:10px 12px;font-size:13.5px;line-height:1.4;margin-bottom:12px}
+.timer{font-size:44px;font-weight:900;text-align:center;font-variant-numeric:tabular-nums;color:var(--brand2)}
+.goal{height:8px;background:#f1e4d0;border-radius:99px;overflow:hidden;margin:6px 0 12px}
+.goal i{display:block;height:100%;width:0;background:linear-gradient(90deg,#f09a1a,#1fa463);transition:width .3s}
+canvas{width:100%;height:110px;display:block;background:#1c2233;border-radius:16px}
+.live{min-height:64px;margin-top:12px;font-size:15.5px;line-height:1.5;color:var(--ink)}
+.live em{color:var(--muted)}
+.topicline{font-weight:700;margin-bottom:10px;font-size:15px}
+.ring{display:flex;gap:16px;align-items:center}
+.ring svg{flex:none}
+.ringtext{font-size:15px;line-height:1.4}
+.ringtext b{font-size:18px;display:block;margin-bottom:3px}
+.metric{padding:12px 0;border-top:1px solid var(--line)}
+.metric:first-of-type{border-top:0}
+.mh{display:flex;align-items:center;gap:10px;font-weight:700}
+.dot{width:22px;height:22px;border-radius:50%;flex:none;display:grid;place-items:center;color:#fff;font-size:13px}
+.good .dot,.dot.good{background:var(--good)}.mid .dot,.dot.mid{background:var(--mid)}.bad .dot,.dot.bad{background:var(--bad)}
+.mh span.v{margin-left:auto;font-weight:800}
+.bar{height:7px;background:#f1e4d0;border-radius:99px;margin:8px 0 5px;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:99px}
+.good .bar i{background:var(--good)}.mid .bar i{background:var(--mid)}.bad .bar i{background:var(--bad)}
+.rec{display:flex;gap:10px;padding:10px 0;border-top:1px solid var(--line);font-size:15px;line-height:1.45}
+.rec:first-of-type{border-top:0}
+.rec .ic{font-size:20px;flex:none}
+.tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.tag{background:#ffe9e9;color:#a82424;border-radius:99px;padding:3px 10px;font-size:13px;font-weight:700}
+.tag.o{background:#fff0d6;color:#9a5b00}
+.tr{font-size:15px;line-height:1.7}
+mark.f{background:#ffd3d3;border-radius:4px;padding:0 2px}
+mark.r{background:#ffe3a8;border-radius:4px;padding:0 2px}
+.cmp{display:grid;grid-template-columns:1fr auto auto;gap:6px 12px;font-size:14.5px;align-items:center}
+.up{color:var(--good);font-weight:800}.down{color:var(--bad);font-weight:800}.eq{color:var(--muted)}
+.hist{display:flex;justify-content:space-between;gap:10px;padding:11px 0;border-top:1px solid var(--line);font-size:14.5px}
+.hist:first-of-type{border-top:0}
+.hist b{font-size:18px}
+nav{display:none!important;position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);display:flex;padding:6px 8px calc(6px + env(safe-area-inset-bottom));z-index:5}
+nav button{flex:1;border:0;background:none;font:inherit;font-size:12px;color:var(--muted);padding:6px;cursor:pointer}
+nav button .e{display:block;font-size:22px}
+nav button.on{color:var(--brand2);font-weight:800}
+.toggle{display:flex;align-items:center;gap:8px;font-size:14px;margin-top:12px}
+.tipgrid{display:grid;gap:10px}
+.tip{background:#fff7ea;border-radius:14px;padding:12px;font-size:14.5px;line-height:1.45}
+.tip b{color:var(--brand2)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="num">9</div>
+    <h1>Говори уверенно<small>AI-тренажёр публичной речи</small></h1>
+    <span class="badge">ДЕМО</span>
+  </header>
+
+  <!-- ГЛАВНАЯ -->
+  <section id="v-home">
+    <div class="card assistant">
+      <div class="orb" id="orb"></div>
+      <div class="bubble" id="bubble">Привет! Я <b>Лира</b>, твой помощник по публичной речи. Выбери тему, нажми запись и говори. Потом я разберу темп, слова-паразиты, повторы и выразительность.</div>
+    </div>
+    <div class="card" id="supportNote"></div>
+    <div class="card">
+      <h2>1. Выбери тему</h2>
+      <div class="topics" id="topics"></div>
+      <input type="text" id="customTopic" placeholder="Или напиши свою тему" style="margin-top:10px">
+    </div>
+    <div class="card">
+      <h2>2. Сколько говорим?</h2>
+      <div class="row" id="goals"></div>
+      <div class="toggle"><input type="checkbox" id="voiceOn" checked> <label for="voiceOn">Лира озвучивает итог голосом</label></div>
+    <button class="btn ghost" id="demoVoice" style="margin-top:10px;font-size:15px;padding:12px">🔊 Услышать голос Лиры</button>
+    </div>
+    <button class="btn" id="startBtn">🎙 Начать запись</button>
+    <button class="btn ghost" id="textBtn">✍️ Нет микрофона? Проверить текст выступления</button>
+  </section>
+
+  <!-- ЗАПИСЬ -->
+  <section id="v-rec" class="hide">
+    <div class="card">
+      <div class="topicline" id="recTopic"></div>
+      <div class="timer" id="timer">00:00</div>
+      <div class="goal"><i id="goalBar"></i></div>
+      <canvas id="wave" width="600" height="220"></canvas>
+      <div class="live" id="liveText"><em>Говори — я записываю…</em></div>
+    </div>
+    <button class="btn red" id="stopBtn">⏹ Закончить и разобрать</button>
+    <button class="btn ghost" id="cancelBtn">Отмена</button>
+  </section>
+
+  <!-- ТЕКСТ -->
+  <section id="v-text" class="hide">
+    <div class="card">
+      <h2>Проверка текста выступления</h2>
+      <p class="small">Вставь или напиши текст, который говоришь вслух. Лира найдёт слова-паразиты и повторы. Темп и выразительность — только по записи голоса.</p>
+      <textarea id="textIn" placeholder="Вставь текст сюда…"></textarea>
+    </div>
+    <button class="btn" id="textGo">Разобрать текст</button>
+    <button class="btn ghost" id="textBack">Назад</button>
+  </section>
+
+  <!-- РЕЗУЛЬТАТ -->
+  <section id="v-res" class="hide"></section>
+
+  <!-- ЛОК -->
+  <section id="v-lock" class="hide">
+    <div class="card" style="text-align:center;padding:26px 18px">
+      <div class="orb" style="margin:0 auto 14px"></div>
+      <h2 style="font-size:20px">Демо-версия завершена</h2>
+      <p class="small" style="font-size:15px">Вы попробовали один разбор выступления. Спасибо!<br><br>В полной версии: неограниченные записи, сравнение попыток, история прогресса и отчёты для учителя.</p>
+      <div class="notice" style="margin-top:14px">Чтобы получить полную версию, свяжитесь с автором проекта.</div>
+    </div>
+  </section>
+
+  <!-- ИСТОРИЯ -->
+  <section id="v-hist" class="hide"></section>
+
+  <!-- СОВЕТЫ -->
+  <section id="v-tips" class="hide">
+    <div class="card">
+      <h2>Как стать увереннее</h2>
+      <div class="tipgrid">
+        <div class="tip"><b>Темп.</b> Комфортно для слушателя — 100–150 слов в минуту. Волнуешься — выдохни и замедлись на первой фразе.</div>
+        <div class="tip"><b>Паузы вместо «э-э».</b> Когда хочется сказать «ну» или «э-э», просто замолчи на секунду. Пауза звучит как уверенность.</div>
+        <div class="tip"><b>Повторы.</b> Если слово звучит третий раз за минуту, найди синоним или переформулируй мысль.</div>
+        <div class="tip"><b>Выразительность.</b> Выделяй голосом главное слово в предложении и меняй высоту голоса в конце мысли.</div>
+        <div class="tip"><b>Структура.</b> Начало: зачем это важно. Середина: 2–3 довода. Конец: вывод одной фразой.</div>
+        <div class="tip"><b>Тренировка.</b> Запиши выступление 3 раза подряд на одну тему и сравни результаты. Прогресс видно уже со второй попытки.</div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<nav>
+  <button data-go="home" class="on"><span class="e">🎙</span>Тренажёр</button>
+  <button data-go="hist"><span class="e">📈</span>Прогресс</button>
+  <button data-go="tips"><span class="e">💡</span>Советы</button>
+</nav>
+
+<script>
+(function(){
+"use strict";
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+const TOPICS=[
+ "Моя будущая профессия и почему я её выбираю",
+ "Искусственный интеллект: помощник или угроза?",
+ "Нужна ли школьная форма?",
+ "Человек, который на меня повлиял",
+ "Как справиться со стрессом перед экзаменом",
+ "Продай обычную ручку за одну минуту",
+ "Роль родного языка в современном мире",
+ "Лучший совет, который мне давали"
+];
+const FILL_SINGLE=new Set(["э","эм","ээ","эээ","мм","ну","вот","типа","короче","значит","блин","просто","собственно","допустим","походу","чисто","реально"]);
+const FILL_MULTI=["как бы","в общем","это самое","так сказать","в принципе","на самом деле","как говорится","как это","в целом то","ну вот","ну это"];
+const STOP=new Set("который которая которые которое этого этому этой этих этом очень также когда потому чтобы только можно более если есть быть было были будет всего всех всем свой своей своих свою нашей нашего нашу тоже даже ещё еще после перед через между может могут один одна одно этот эта это эти того тому такой такое такие такая так там тут здесь сейчас вообще".split(" "));
+let S={topic:TOPICS[0],goal:60,sel:0,recording:false,startT:0,stream:null,actx:null,an:null,raf:0,rec:null,final:"",interim:"",samples:[],lastSample:0,timerI:0};
+
+/* ---------- storage ---------- */
+function loadH(){try{return JSON.parse(localStorage.getItem("uv_hist")||"[]")}catch(e){return[]}}
+function saveH(a){try{localStorage.setItem("uv_hist",JSON.stringify(a.slice(-40)))}catch(e){}}
+
+/* ---------- views ---------- */
+function show(id){
+  ["home","rec","text","res","hist","tips"].forEach(k=>$("#v-"+k).classList.toggle("hide",k!==id));
+  document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.go===id||(id==="res"&&b.dataset.go==="home")));
+  window.scrollTo(0,0);
+  if(id==="hist")renderHist();
+}
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{if(S.recording)return;show(b.dataset.go)});
+
+/* ---------- home ---------- */
+function buildHome(){
+  const t=$("#topics");
+  t.innerHTML=TOPICS.map((x,i)=>`<button class="topic ${i===S.sel?'sel':''}" data-i="${i}">${esc(x)}</button>`).join("");
+  t.querySelectorAll(".topic").forEach(b=>b.onclick=()=>{S.sel=+b.dataset.i;S.topic=TOPICS[S.sel];$("#customTopic").value="";buildHome()});
+  const g=$("#goals");
+  g.innerHTML=[[60,"1 минута"],[120,"2 минуты"],[180,"3 минуты"]].map(([s,l])=>`<button class="chip ${S.goal===s?'sel':''}" data-s="${s}">${l}</button>`).join("");
+  g.querySelectorAll(".chip").forEach(b=>b.onclick=()=>{S.goal=+b.dataset.s;buildHome()});
+  const n=$("#supportNote");
+  if(!SR){n.innerHTML='<div class="notice" style="margin:0">⚠️ Этот браузер не умеет распознавать речь. Откройте сайт в <b>Google Chrome</b> на телефоне Android или компьютере. Пока можно проверить текст выступления.</div>';}
+  else{n.innerHTML='<div class="small">✅ Всё работает в браузере. Запись голоса остаётся на вашем телефоне и никуда не отправляется нами. Для распознавания слов Chrome использует собственный сервис Google, поэтому нужен интернет. Разреши доступ к микрофону, когда браузер спросит.</div>';}
+}
+$("#customTopic").addEventListener("input",e=>{const v=e.target.value.trim();if(v){S.topic=v;S.sel=-1;document.querySelectorAll(".topic").forEach(x=>x.classList.remove("sel"))}});
+
+/* ---------- recording ---------- */
+function fmt(s){s=Math.floor(s);return String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0")}
+async function startRec(){
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){alert("Микрофон недоступен. Откройте сайт по ссылке https:// в Chrome.");return}
+  try{
+    S.stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true}});
+  }catch(e){alert("Нет доступа к микрофону. Разреши микрофон в настройках сайта и попробуй ещё раз.");return}
+  const claim=await api("claim");
+  if(claim&&claim.allowed===false){try{S.stream.getTracks().forEach(t=>t.stop())}catch(e){}lockAll();return}
+  const AC=window.AudioContext||window.webkitAudioContext;
+  S.actx=new AC();
+  const src=S.actx.createMediaStreamSource(S.stream);
+  S.an=S.actx.createAnalyser();S.an.fftSize=2048;src.connect(S.an);
+  S.final="";S.interim="";S.samples=[];S.lastSample=0;S.recording=true;S.startT=performance.now();
+  $("#recTopic").textContent="Тема: "+S.topic;
+  $("#liveText").innerHTML="<em>Говори — я записываю…</em>";
+  show("rec");$("#orb").classList.add("live");
+  if(SR){
+    const r=new SR();r.lang="ru-RU";r.continuous=true;r.interimResults=true;r.maxAlternatives=1;
+    r.onresult=e=>{
+      let interim="";
+      for(let i=e.resultIndex;i<e.results.length;i++){
+        const t=e.results[i][0].transcript;
+        if(e.results[i].isFinal)S.final+=t+" ";else interim+=t;
+      }
+      S.interim=interim;
+      $("#liveText").textContent=(S.final+interim).trim()||"…";
+      const el=$("#liveText");el.scrollTop=el.scrollHeight;
+    };
+    r.onerror=e=>{if(e.error==="not-allowed"||e.error==="service-not-allowed"){$("#liveText").innerHTML="<em>Распознавание речи не разрешено. Анализ голоса всё равно идёт.</em>"}};
+    r.onend=()=>{if(S.recording){try{r.start()}catch(e){}}};
+    try{r.start()}catch(e){}
+    S.rec=r;
+  }else{$("#liveText").innerHTML="<em>Текст не распознаётся в этом браузере, но голос анализируется.</em>"}
+  S.timerI=setInterval(()=>{
+    const t=(performance.now()-S.startT)/1000;
+    $("#timer").textContent=fmt(t);
+    $("#goalBar").style.width=Math.min(100,t/S.goal*100)+"%";
+  },250);
+  loop();
+}
+function pitchOf(buf,sr){
+  const n=buf.length;let e0=0;for(let i=0;i<n;i++)e0+=buf[i]*buf[i];
+  if(Math.sqrt(e0/n)<0.012)return 0;
+  const minL=Math.floor(sr/400),maxL=Math.floor(sr/70);let best=0,bl=0;
+  for(let l=minL;l<=maxL;l++){let s=0;for(let i=0;i<n-l;i++)s+=buf[i]*buf[i+l];if(s>best){best=s;bl=l}}
+  if(!bl||best/e0<0.35)return 0;
+  return sr/bl;
+}
+function loop(){
+  if(!S.recording)return;
+  S.raf=requestAnimationFrame(loop);
+  const an=S.an,buf=new Float32Array(an.fftSize);an.getFloatTimeDomainData(buf);
+  let sum=0;for(let i=0;i<buf.length;i++)sum+=buf[i]*buf[i];
+  const rms=Math.sqrt(sum/buf.length);
+  const now=performance.now();
+  if(now-S.lastSample>=90){
+    S.lastSample=now;
+    S.samples.push({t:(now-S.startT)/1000,rms,pitch:pitchOf(buf,S.actx.sampleRate)});
+  }
+  drawWave(buf,rms);
+}
+function drawWave(buf,rms){
+  const c=$("#wave"),g=c.getContext("2d"),W=c.width,H=c.height;
+  g.clearRect(0,0,W,H);
+  const bars=48,step=Math.floor(buf.length/bars);
+  g.fillStyle="#ffb35c";
+  for(let i=0;i<bars;i++){
+    let m=0;for(let j=0;j<step;j++)m=Math.max(m,Math.abs(buf[i*step+j]));
+    const h=Math.max(6,Math.min(H-10,m*H*2.4));
+    const x=i*(W/bars)+3;
+    g.fillRect(x,(H-h)/2,W/bars-8,h);
+  }
+}
+function stopMedia(){
+  S.recording=false;cancelAnimationFrame(S.raf);clearInterval(S.timerI);$("#orb").classList.remove("live");
+  try{S.rec&&S.rec.stop()}catch(e){}
+  try{S.stream&&S.stream.getTracks().forEach(t=>t.stop())}catch(e){}
+  try{S.actx&&S.actx.close()}catch(e){}
+}
+$("#startBtn").onclick=startRec;
+$("#cancelBtn").onclick=()=>{stopMedia();show("home")};
+$("#stopBtn").onclick=()=>{
+  const dur=(performance.now()-S.startT)/1000;
+  $("#stopBtn").disabled=true;$("#liveText").innerHTML="<em>Лира слушает запись и считает…</em>";
+  stopMedia();
+  setTimeout(()=>{
+    $("#stopBtn").disabled=false;
+    const text=(S.final+" "+S.interim).trim();
+    if(dur<5){alert("Запись слишком короткая. Скажи хотя бы несколько фраз.");show("home");return}
+    const r=analyze(text,dur,S.samples);
+    finish(r);
+  },900);
+};
+$("#textBtn").onclick=()=>show("text");
+$("#textBack").onclick=()=>show("home");
+$("#textGo").onclick=async()=>{
+  const t=$("#textIn").value.trim();
+  if(t.split(/\s+/).length<15){alert("Напиши или вставь хотя бы 15 слов.");return}
+  const claim=await api("claim");
+  if(claim&&claim.allowed===false){lockAll();return}
+  finish(analyze(t,0,[]));
+};
+
+/* ---------- analysis ---------- */
+const clamp=(x,a=0,b=100)=>Math.max(a,Math.min(b,x));
+const pct=(arr,p)=>{if(!arr.length)return 0;const s=[...arr].sort((a,b)=>a-b);return s[Math.min(s.length-1,Math.floor(p*s.length))]};
+function words(text){return text.toLowerCase().replace(/ё/g,"е").replace(/[^а-яa-z0-9\s-]/g," ").split(/\s+/).filter(Boolean)}
+function analyze(text,dur,samples){
+  const w=words(text),n=w.length;
+  const R={text,dur,n,topic:S.topic,ts:Date.now(),hasAudio:samples.length>20};
+  // fillers
+  const joined=" "+w.join(" ")+" ";const fl={};let fc=0;
+  FILL_MULTI.forEach(p=>{const re=new RegExp(" "+p+" ","g");let m,k=0;let tmp=joined;while((m=re.exec(joined))){k++;re.lastIndex=m.index+p.length+1}if(k){fl[p]=k;fc+=k}});
+  w.forEach(x=>{if(FILL_SINGLE.has(x)){fl[x]=(fl[x]||0)+1;fc++}});
+  R.fillers=fl;R.fillerCount=fc;R.fillerPer100=n?fc/n*100:0;
+  // repeats
+  const imm=[];for(let i=1;i<n;i++)if(w[i]===w[i-1]&&w[i].length>1)imm.push(w[i]);
+  const stem={};w.forEach(x=>{if(x.length>=5&&!STOP.has(x)&&!FILL_SINGLE.has(x)){const k=x.slice(0,5);(stem[k]=stem[k]||{c:0,w:x}).c++}});
+  const over=Object.values(stem).filter(o=>o.c>=4&&o.c/n>0.025).sort((a,b)=>b.c-a.c).slice(0,6);
+  const excess=over.reduce((s,o)=>s+(o.c-3),0);
+  R.immRepeats=imm;R.overused=over;
+  R.repPer100=n?(imm.length+excess)/n*100:0;
+  // audio
+  let speakStart=0,speakEnd=dur;R.pauses=0;R.longPauses=0;R.pitchStd=null;R.volCv=null;
+  if(R.hasAudio){
+    const rm=samples.map(s=>s.rms);const thr=Math.max(0.012,pct(rm,0.9)*0.2);
+    const voiced=samples.filter(s=>s.rms>thr);
+    if(voiced.length>10){
+      speakStart=voiced[0].t;speakEnd=voiced[voiced.length-1].t;
+      let sil=0,silStart=0;
+      samples.forEach(s=>{
+        if(s.t<speakStart||s.t>speakEnd)return;
+        if(s.rms<=thr){if(!sil)silStart=s.t;sil++}
+        else{if(sil){const len=s.t-silStart;if(len>=0.6)R.pauses++;if(len>=2.5)R.longPauses++}sil=0}
+      });
+      const v=voiced.map(s=>s.rms),mean=v.reduce((a,b)=>a+b,0)/v.length;
+      const sd=Math.sqrt(v.reduce((a,b)=>a+(b-mean)**2,0)/v.length);R.volCv=mean?sd/mean:0;
+      const p=voiced.map(s=>s.pitch).filter(x=>x>0);
+      if(p.length>15){
+        const med=pct(p,0.5);const st=p.map(x=>12*Math.log2(x/med)).filter(x=>Math.abs(x)<=10);
+        const m=st.reduce((a,b)=>a+b,0)/st.length;
+        R.pitchStd=Math.sqrt(st.reduce((a,b)=>a+(b-m)**2,0)/st.length);
+      }
+    }
+  }
+  const speakSec=Math.max(5,speakEnd-speakStart);
+  R.speakSec=speakSec;
+  R.wpm=dur>0&&n>0?n/(speakSec/60):null;
+  // scores
+  const sc={};
+  if(R.wpm!==null){const x=R.wpm;sc.tempo=clamp(x<100?100-(100-x)*1.3:x>150?100-(x-150)*1.3:100)}
+  sc.filler=clamp(100-R.fillerPer100*13);
+  sc.repeat=clamp(100-R.repPer100*14);
+  if(R.hasAudio&&(R.pitchStd!==null||R.volCv!==null)){
+    const p=R.pitchStd!==null?clamp(R.pitchStd/3.2*100):60;
+    const v=R.volCv!==null?clamp(R.volCv/0.5*100):60;
+    const ppm=R.pauses/(speakSec/60);
+    const pa=R.pauses===0&&speakSec>20?35:clamp(ppm<3?60+ppm*13:ppm>14?100-(ppm-14)*6:100)-(R.longPauses?R.longPauses*8:0);
+    sc.expr=clamp(p*0.5+v*0.3+clamp(pa)*0.2);
+  }
+  R.scores=sc;
+  const wt={tempo:.25,filler:.28,repeat:.2,expr:.27};let tw=0,ts=0;
+  Object.keys(sc).forEach(k=>{tw+=wt[k];ts+=sc[k]*wt[k]});
+  R.overall=Math.round(ts/tw);
+  R.recs=makeRecs(R);
+  return R;
+}
+function makeRecs(R){
+  const a=[],s=R.scores;
+  if(R.n<25)a.push(["⚠️","Текста получилось мало, поэтому оценка приблизительная. Попробуй говорить подольше или ближе к микрофону."]);
+  if(R.wpm!==null){
+    if(R.wpm>155)a.push(["🐢","Ты говоришь быстро ("+Math.round(R.wpm)+" слов/мин). Делай вдох в конце каждой мысли и заканчивай предложение паузой. Цель — 110–140."]);
+    else if(R.wpm<95)a.push(["🚀","Темп медленный ("+Math.round(R.wpm)+" слов/мин). Слушатель может заскучать. Говори чуть бодрее и убирай длинные раздумья."]);
+    else a.push(["👍","Темп хороший: "+Math.round(R.wpm)+" слов в минуту. Слушателю комфортно."]);
+  }
+  if(R.fillerPer100>=3){
+    const top=Object.entries(R.fillers).sort((x,y)=>y[1]-x[1]).slice(0,3).map(x=>"«"+x[0]+"»").join(", ");
+    a.push(["🔇","Много слов-паразитов: "+top+". Заменяй их паузой в 1 секунду. Перед следующей попыткой заранее запомни, какое слово у тебя лишнее."]);
+  }else if(R.fillerCount>0)a.push(["✅","Слов-паразитов мало ("+R.fillerCount+"). Следи за словами "+Object.keys(R.fillers).slice(0,2).map(x=>"«"+x+"»").join(", ")+"."]);
+  else a.push(["🏆","Слов-паразитов не нашла. Отлично!"]);
+  if(R.immRepeats.length)a.push(["🔁","Слова подряд: "+[...new Set(R.immRepeats)].slice(0,4).map(x=>"«"+x+" "+x+"»").join(", ")+". Это признак волнения. Сделай вдох и продолжай."]);
+  if(R.overused.length)a.push(["📚","Часто повторяются слова: "+R.overused.slice(0,4).map(o=>"«"+o.w+"» ×"+o.c).join(", ")+". Подбери синонимы или перестрой фразы."]);
+  if(R.hasAudio&&s.expr!==undefined){
+    if(R.pitchStd!==null&&R.pitchStd<2)a.push(["🎵","Голос звучит ровно (монотонно). Выделяй голосом главное слово в предложении и повышай интонацию на вопросах."]);
+    if(R.pauses===0&&R.speakSec>20)a.push(["⏸","Почти нет пауз. Ставь паузу перед главной мыслью и после неё. Это привлекает внимание."]);
+    if(R.longPauses>1)a.push(["⏳","Было "+R.longPauses+" длинных пауз (больше 2,5 секунды). Подготовь опорные слова на каждую часть речи."]);
+    if(R.volCv!==null&&R.volCv<0.3)a.push(["🔊","Громкость почти не меняется. Делай ключевые слова громче, а вводные тише."]);
+    if(s.expr>=75)a.push(["🌟","Речь выразительная: голос живой, паузы расставлены хорошо."]);
+  }
+  if(!R.hasAudio)a.push(["🎙","Для оценки темпа и выразительности запиши голос на телефон через кнопку записи."]);
+  a.push(["🎯","Следующий шаг: потренируй самый слабый показатель. В полной версии Лира сравнит попытки и покажет прогресс."]);
+  return a;
+}
+
+/* ---------- result ---------- */
+const cls=v=>v>=75?"good":v>=50?"mid":"bad";
+const ico=v=>v>=75?"✓":v>=50?"!":"✕";
+function ring(v){
+  const r=44,c=2*Math.PI*r,col=v>=75?"#1fa463":v>=50?"#f09a1a":"#e03e3e";
+  return `<svg width="110" height="110" viewBox="0 0 110 110"><circle cx="55" cy="55" r="${r}" fill="none" stroke="#f1e4d0" stroke-width="11"/><circle cx="55" cy="55" r="${r}" fill="none" stroke="${col}" stroke-width="11" stroke-linecap="round" stroke-dasharray="${c*v/100} ${c}" transform="rotate(-90 55 55)"/><text x="55" y="62" text-anchor="middle" font-size="28" font-weight="900" fill="#2b1d14">${v}</text></svg>`;
+}
+function metric(name,score,val,hint){
+  if(score===undefined)return `<div class="metric"><div class="mh"><span class="dot" style="background:#bbb">–</span>${name}<span class="v" style="color:#999">нет данных</span></div><div class="small">${hint}</div></div>`;
+  const c=cls(score);
+  return `<div class="metric ${c}"><div class="mh"><span class="dot">${ico(score)}</span>${name}<span class="v">${val}</span></div><div class="bar"><i style="width:${Math.max(4,score)}%"></i></div><div class="small">${hint}</div></div>`;
+}
+function highlight(R){
+  let t=esc(R.text);
+  const rep=new Set(R.overused.map(o=>o.w.slice(0,5)));
+  const keys=[...FILL_MULTI,...FILL_SINGLE].sort((a,b)=>b.length-a.length);
+  const re=new RegExp("(^|[^а-яА-ЯёЁa-z])("+keys.join("|")+")(?=[^а-яА-ЯёЁa-z]|$)","gi");
+  t=t.replace(re,(m,a,b)=>a+'<mark class="f">'+b+'</mark>');
+  t=t.replace(/([а-яёА-ЯЁ]{5,})/g,(m)=>{if(m.length>=5&&rep.has(m.toLowerCase().replace(/ё/g,"е").slice(0,5)))return '<mark class="r">'+m+'</mark>';return m});
+  return t;
+}
+function compareBlock(R,prev){
+  if(!prev)return"";
+  const rows=[["Общая оценка",R.overall,prev.overall],["Слова-паразиты",R.scores.filler,prev.scores.filler],["Повторы",R.scores.repeat,prev.scores.repeat]];
+  if(R.scores.tempo!==undefined&&prev.scores.tempo!==undefined)rows.push(["Темп",R.scores.tempo,prev.scores.tempo]);
+  if(R.scores.expr!==undefined&&prev.scores.expr!==undefined)rows.push(["Выразительность",R.scores.expr,prev.scores.expr]);
+  const body=rows.map(([n,a,b])=>{const d=Math.round(a-b);return `<span>${n}</span><span>${Math.round(b)} → <b>${Math.round(a)}</b></span><span class="${d>0?'up':d<0?'down':'eq'}">${d>0?'▲ +'+d:d<0?'▼ '+d:'='}</span>`}).join("");
+  return `<div class="card"><h2>📊 Сравнение с прошлой попыткой</h2><div class="small" style="margin-bottom:8px">Тема: ${esc(prev.topic)}</div><div class="cmp">${body}</div></div>`;
+}
+let lastR=null;
+function finish(R){
+  markUsed();
+  const H=[];
+  const prev=H.length?H[H.length-1]:null;
+  const rec={ts:R.ts,topic:R.topic,overall:R.overall,scores:R.scores,wpm:R.wpm,words:R.n,fillerCount:R.fillerCount,dur:Math.round(R.dur)};
+  lastR=R;
+  const s=R.scores;
+  const verdict=R.overall>=80?"Отличная речь!":R.overall>=65?"Хороший результат, есть что улучшить":R.overall>=45?"Неплохое начало, потренируемся":"Нужно больше практики — ты справишься";
+  const fillTags=Object.entries(R.fillers).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<span class="tag">${esc(k)} ×${v}</span>`).join("");
+  const overTags=R.overused.map(o=>`<span class="tag o">${esc(o.w)} ×${o.c}</span>`).join("");
+  $("#v-res").innerHTML=`
+  <div class="card"><div class="ring">${ring(R.overall)}<div class="ringtext"><b>${verdict}</b>${esc(R.topic)}<br><span class="small">${R.dur?fmt(R.dur)+' · ':''}${R.n} слов</span></div></div></div>
+  <div class="card"><h2>Разбор выступления</h2>
+    ${metric("Темп речи",s.tempo,R.wpm!==null?Math.round(R.wpm)+" сл/мин":"","Норма: 100–150 слов в минуту")}
+    ${metric("Паразитные слова",s.filler,R.fillerCount+" шт ("+R.fillerPer100.toFixed(1)+" на 100 слов)","Идеально: меньше 2 на 100 слов")}
+    ${fillTags?`<div class="tags">${fillTags}</div>`:""}
+    ${metric("Повторы",s.repeat,(R.immRepeats.length+R.overused.length)+" найдено","Повторы слов подряд и частые одинаковые слова")}
+    ${overTags?`<div class="tags">${overTags}</div>`:""}
+    ${metric("Выразительность",s.expr,s.expr!==undefined?Math.round(s.expr)+"/100":"","Интонация, громкость и паузы"+(R.hasAudio?" · пауз: "+R.pauses:""))}
+  </div>
+  <div class="card"><h2>💡 Рекомендации Лиры</h2>${R.recs.map(r=>`<div class="rec"><span class="ic">${r[0]}</span><span>${esc(r[1])}</span></div>`).join("")}</div>
+  ${compareBlock(R,prev)}
+  <div class="card"><h2>Текст выступления</h2><div class="small" style="margin-bottom:8px"><mark class="f">паразиты</mark> <mark class="r">частые слова</mark></div><div class="tr">${R.text?highlight(R):'<span class="small">Текст не распознан. Попробуй Chrome и говори ближе к микрофону.</span>'}</div></div>
+  <button class="btn blue" id="speak">🔊 Лира озвучит итог</button>
+  <div class="notice" style="margin-top:14px;text-align:center">Это демо-версия: доступна <b>одна</b> попытка. В полной версии можно записываться снова и сравнивать результаты.</div>`;
+  $("#speak").onclick=()=>speakSummary(R);
+  show("res");
+  $("#bubble").innerHTML="Готово! Оценка <b>"+R.overall+" из 100</b>. Загляни в рекомендации ниже.";
+  if($("#voiceOn").checked)setTimeout(()=>speakSummary(R),500);
+}
+function speakSummary(R){
+  if(!window.speechSynthesis)return;
+  window.speechSynthesis.cancel();
+  const first=R.recs.find(r=>/🔇|🐢|🚀|🎵|🔁|📚|⏸/.test(r[0]))||R.recs[0];
+  const t="Твоя оценка "+R.overall+" из 100. "+first[1]+" Спасибо, что попробовал демо!";
+  sayText(t);
+}
+function bestVoice(){
+  const vs=(speechSynthesis.getVoices()||[]).filter(x=>x.lang&&x.lang.toLowerCase().replace("_","-").startsWith("ru"));
+  const pref=[/google.*(рус|ru)/i,/milena|alena|katya|svetlana|irina|anna|tatyana/i,/female|жен/i];
+  for(const re of pref){const f=vs.find(v=>re.test(v.name));if(f)return f}
+  return vs[0]||null;
+}
+function sayText(t){
+  if(!window.speechSynthesis)return;
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(t);u.lang="ru-RU";u.rate=1.03;u.pitch=1.08;
+  const v=bestVoice();if(v)u.voice=v;
+  speechSynthesis.speak(u);
+}
+window.__say=sayText;
+
+/* ---------- history ---------- */
+function renderHist(){
+  const H=loadH();
+  if(!H.length){$("#v-hist").innerHTML='<div class="card"><h2>Прогресс</h2><p class="small">Пока нет записей. Сделай первое выступление, и здесь появится график роста.</p></div>';return}
+  const pts=H.map(h=>h.overall),W=320,Hh=90,P=12;
+  const xs=pts.map((_,i)=>P+(pts.length===1?W/2:i*(W-2*P)/(pts.length-1)));
+  const ys=pts.map(v=>Hh-P-(v/100)*(Hh-2*P));
+  const path=xs.map((x,i)=>(i?"L":"M")+x.toFixed(1)+" "+ys[i].toFixed(1)).join(" ");
+  const dots=xs.map((x,i)=>`<circle cx="${x}" cy="${ys[i]}" r="4" fill="#b5651d"/>`).join("");
+  const avg=Math.round(pts.reduce((a,b)=>a+b,0)/pts.length);
+  const diff=pts.length>1?pts[pts.length-1]-pts[0]:0;
+  $("#v-hist").innerHTML=`<div class="card"><h2>📈 Твой прогресс</h2>
+   <svg viewBox="0 0 ${W} ${Hh}" width="100%"><path d="${path}" fill="none" stroke="#b5651d" stroke-width="3" stroke-linejoin="round"/>${dots}</svg>
+   <div class="small">Попыток: ${H.length} · средняя оценка: ${avg}${pts.length>1?" · с первой попытки: "+(diff>=0?"+":"")+diff:""}</div></div>
+   <div class="card"><h2>История</h2>${[...H].reverse().map(h=>`<div class="hist"><div><div>${esc(h.topic)}</div><div class="small">${new Date(h.ts).toLocaleString("ru-RU",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})}${h.wpm?" · "+Math.round(h.wpm)+" сл/мин":""} · паразитов: ${h.fillerCount}</div></div><b>${h.overall}</b></div>`).join("")}
+   <button class="btn ghost" id="clearH" style="margin-top:12px">Очистить историю</button></div>`;
+  $("#clearH").onclick=()=>{if(confirm("Удалить всю историю?")){saveH([]);renderHist()}};
+}
+
+function markUsed(){try{localStorage.setItem("uv_demo_used","1")}catch(e){}}
+function isUsed(){try{return localStorage.getItem("uv_demo_used")==="1"}catch(e){return false}}
+function lockAll(){["home","rec","text","res","hist","tips"].forEach(k=>$("#v-"+k).classList.add("hide"));$("#v-lock").classList.remove("hide");window.scrollTo(0,0)}
+async function api(a,extra){
+  try{
+    const r=await fetch("/api/demo?a="+a+(extra||""),{method:a==="claim"?"POST":"GET",cache:"no-store"});
+    if(!r.ok)return null;
+    return await r.json();
+  }catch(e){return null}
+}
+buildHome();
+(async function init(){
+  const m=location.search.match(/[?&]reset=([^&]+)/);
+  if(m){
+    try{localStorage.removeItem("uv_demo_used")}catch(e){}
+    await api("reset","&key="+m[1]);
+    location.replace(location.pathname);
+    return;
+  }
+  if(isUsed()){lockAll();return}
+  const st=await api("status");
+  if(st&&st.used)lockAll();
+})();
+$("#demoVoice").onclick=()=>sayText("Привет! Я Лира, твой помощник по публичной речи. Давай потренируемся говорить уверенно.");
+if(window.speechSynthesis)speechSynthesis.getVoices();
+})();
+</script>
+</body>
+</html>
